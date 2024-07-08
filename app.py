@@ -2,7 +2,7 @@ from transformers import pipeline
 
 # Load a pre-trained model
 try:
-    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B")
+    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B", truncation=True)
 except Exception as e:
     print(f"Error loading model: {e}")
     exit(1)
@@ -11,7 +11,7 @@ except Exception as e:
 def generate_text(context, prompt):
     try:
         combined_prompt = context + "\n" + prompt
-        result = nlp(combined_prompt, max_length=50, num_return_sequences=1, temperature=0.7, top_k=50)
+        result = nlp(combined_prompt, max_length=150, temperature=0.7, top_k=50)
         return result[0]['generated_text']
     except Exception as e:
         print(f"Error generating text: {e}")
