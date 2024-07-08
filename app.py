@@ -2,7 +2,7 @@ from transformers import pipeline
 
 # Load a pre-trained model
 try:
-    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B", truncation=True)
+    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B", truncation=True, pad_token_id=0, eos_token_id=50256)
 except Exception as e:
     print(f"Error loading model: {e}")
     exit(1)
@@ -30,11 +30,13 @@ def start_conversation():
             elif user_input.strip().lower() == "/end":
                 print("AI: Conversation ended. Goodbye!")
                 break
-            elif "Conversation started!" in context:
+            elif context.startswith("AI: Conversation started!"):
                 context += "\nYou: " + user_input
                 response = generate_text(context, "AI:")
-                print(f"AI: {response}")
-                context += "\nAI: " + response
+                # Extract only the AI's response from the generated text
+                ai_response = response.split("AI:")[-1].strip()
+                print(f"AI: {ai_response}")
+                context += "\nAI: " + ai_response
 
                 # Truncate context if it becomes too long
                 if len(context.split()) > 500:
