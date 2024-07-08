@@ -8,8 +8,20 @@ def generate_text(prompt):
     result = nlp(prompt, max_length=50, num_return_sequences=1)
     return result[0]['generated_text']
 
+# Main function to handle conversation
+def start_conversation():
+    print("AI: Hello! Type '/start' to begin the conversation.")
+    while True:
+        user_input = input("You: ")
+        if user_input.strip().lower() == "/start":
+            print("AI: Conversation started! You can start typing your questions.")
+        elif user_input.strip().lower() == "/end":
+            print("AI: Conversation ended. Goodbye!")
+            break
+        else:
+            response = generate_text(user_input)
+            print(f"AI: {response}")
+
 # Example usage
 if __name__ == "__main__":
-    prompt = "Once upon a time"
-    generated_text = generate_text(prompt)
-    print(generated_text)
+    start_conversation()
