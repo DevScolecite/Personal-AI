@@ -4,8 +4,9 @@ from transformers import pipeline
 nlp = pipeline("text-generation", model="gpt2")
 
 # Function to generate text
+# Function to generate text with adjusted parameters
 def generate_text(prompt):
-    result = nlp(prompt, max_length=50, num_return_sequences=1)
+    result = nlp(prompt, max_length=50, num_return_sequences=1, temperature=0.7, top_k=50)
     return result[0]['generated_text']
 
 # Main function to handle conversation
