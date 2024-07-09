@@ -2,7 +2,7 @@ from transformers import pipeline
 
 # Load a pre-trained model
 try:
-    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B", truncation=True, pad_token_id=0, eos_token_id=50256)
+    nlp = pipeline("text-generation", model="EleutherAI/gpt-neo-1.3B", pad_token_id=50256, eos_token_id=50256)
     print("Model loaded successfully.")
 except Exception as e:
     print(f"Error loading model: {e}")
@@ -12,7 +12,7 @@ except Exception as e:
 def generate_text(context, prompt):
     try:
         combined_prompt = context + "\n" + prompt
-        result = nlp(combined_prompt, max_length=150, temperature=0.7, top_k=50)
+        result = nlp(combined_prompt, max_length=150, temperature=0.7, top_k=50, num_return_sequences=1)
         generated_text = result[0]['generated_text']
         print(f"Generated text: {generated_text}")
         return generated_text
@@ -34,7 +34,7 @@ def start_conversation():
             elif user_input.strip().lower() == "/end":
                 print("AI: Conversation ended. Goodbye!")
                 break
-            elif context.startswith("AI: Conversation started!"):
+            elif "Conversation started!" in context:
                 context += "\nYou: " + user_input
                 response = generate_text(context, "AI:")
                 # Extract only the AI's response from the generated text
