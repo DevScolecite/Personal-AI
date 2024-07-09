@@ -42,10 +42,10 @@ def start_conversation():
                 context += "\nYou: " + user_input
                 response = generate_text(context, "AI:")
                 
-                # Split the response into lines and take only the last line starting with "AI:"
+                # Split the response into lines and take only the first relevant AI response
                 ai_responses = [line for line in response.split("\n") if line.startswith("AI:")]
                 if ai_responses:
-                    ai_response = ai_responses[-1].strip()
+                    ai_response = ai_responses[0].strip()
                 else:
                     ai_response = "I'm sorry, I couldn't process that request."
 
