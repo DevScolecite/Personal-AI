@@ -12,7 +12,7 @@ except Exception as e:
 def generate_text(context, prompt):
     try:
         combined_prompt = context + "\n" + prompt
-        result = nlp(combined_prompt, max_length=150, temperature=0.7, top_k=50, num_return_sequences=1)
+        result = nlp(combined_prompt, max_length=150, temperature=0.7, top_k=50, num_return_sequences=1, truncation=True)
         generated_text = result[0]['generated_text']
         print(f"Generated text: {generated_text}")
         return generated_text
@@ -24,23 +24,33 @@ def generate_text(context, prompt):
 def start_conversation():
     context = "AI: Hello! How can I help you today?"
     print("AI: Hello! Type '/start' to begin the conversation or '/end' to end it.")
+    conversation_started = False
+    
     while True:
         try:
             user_input = input("You: ")
             print(f"User input: {user_input}")
+
             if user_input.strip().lower() == "/start":
+                conversation_started = True
                 context = "AI: Conversation started! You can start typing your questions."
-                print("AI: Conversation started! You can start typing your questions.")
+                print(context)
             elif user_input.strip().lower() == "/end":
                 print("AI: Conversation ended. Goodbye!")
                 break
-            elif "Conversation started!" in context:
+            elif conversation_started:
                 context += "\nYou: " + user_input
                 response = generate_text(context, "AI:")
-                # Extract only the AI's response from the generated text
-                ai_response = response.split("AI:")[-1].strip()
+                
+                # Split the response into lines and take only the last line starting with "AI:"
+                ai_responses = [line for line in response.split("\n") if line.startswith("AI:")]
+                if ai_responses:
+                    ai_response = ai_responses[-1].strip()
+                else:
+                    ai_response = "I'm sorry, I couldn't process that request."
+
                 print(f"AI: {ai_response}")
-                context += "\nAI: " + ai_response
+                context += "\n" + ai_response
 
                 # Truncate context if it becomes too long
                 if len(context.split()) > 500:
